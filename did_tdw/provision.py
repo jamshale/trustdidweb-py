@@ -3,16 +3,14 @@ import asyncio
 import base64
 import json
 import re
-
 from copy import deepcopy
 from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
-from typing import Tuple, Optional, Union
+from typing import Optional, Tuple, Union
 
 import aries_askar
 import jsoncanon
-
 from did_history.did import SCID_PLACEHOLDER
 from did_history.format import HashInfo, format_hash
 from did_history.state import DocumentState
@@ -24,7 +22,6 @@ from .proof import (
     VerifyingKey,
     di_jcs_sign,
 )
-
 
 DID_CONTEXT = "https://www.w3.org/ns/did/v1"
 DOMAIN_PATTERN = re.compile(r"^([a-zA-Z0-9%_\-]+\.)+[a-zA-Z0-9%_\.\-]{2,}$")
@@ -53,6 +50,8 @@ async def auto_provision_did(
         next_key_hash = None
     state = provision_did(genesis, params=params, hash_name=hash_name)
     doc_id = state.document_id
+    # Check for percent-encoded domain name
+    doc_dir = doc_dir.replace("%3A", ":")
     doc_dir = Path(doc_id)
     doc_dir.mkdir(exist_ok=False)
 
@@ -106,8 +105,7 @@ def encode_verification_method(vk: VerifyingKey, controller: str = None) -> dict
 
 
 def genesis_document(placeholder_id: str) -> dict:
-    """
-    Generate a standard genesis document from a set of verification keys.
+    """Generate a standard genesis document from a set of verification keys.
 
     The exact format of this document may change over time.
     """
@@ -147,9 +145,7 @@ if __name__ == "__main__":
         "--algorithm",
         help="the signing key algorithm (default ed25519)",
     )
-    parser.add_argument(
-        "--hash", help="the name of the hash function (default sha-256)"
-    )
+    parser.add_argument("--hash", help="the name of the hash function (default sha-256)")
     parser.add_argument(
         "domain_path", help="the domain name and optional path components"
     )
