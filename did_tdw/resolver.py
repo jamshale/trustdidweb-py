@@ -2,14 +2,12 @@ import argparse
 import asyncio
 import json
 import urllib.parse
-
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
 import aiofiles
 import aiohttp
-
 from did_history.did import DIDUrl
 from did_history.resolver import (
     DereferencingResult,
@@ -104,7 +102,7 @@ async def resolve_did(
     else:
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.get(url) as req:
+                async with session.get(url, ssl=False) as req:
                     req.raise_for_status()
                     result = await resolve_history(
                         didurl.did,
