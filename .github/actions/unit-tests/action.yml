@@ -15,8 +15,10 @@ runs:
       with:
         python-version: '3.12'
     - name: Install dependencies
+      shell: bash
       run: pip install poetry && poetry install
     - name: Run unit tests
+      shell: bash
       run: | 
         if [ "${{ inputs.with-coverage }}" = "true" ]; then
           poetry run pytest --cov .
