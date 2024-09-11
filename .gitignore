@@ -1,3 +1,7 @@
 /did:*
 *.pyc
 __pycache__
+
+.venv
+.vscode
+.coverage
